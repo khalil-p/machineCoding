@@ -1,52 +1,54 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 function OtpInput() {
-  const otpDigitCount = 4;
+  const numberOfInputs = 5;
   const refArray = useRef([]);
-  // To jump to next imput box first find the refrence of the next input box and then call a focus function on it
-  const [inputArray, setInputArray] = useState(
-    new Array(otpDigitCount).fill("")
-  );
+  const [inputArray, setInputArray] = useState(Array(numberOfInputs).fill(""));
+
+  //   events
   function handleOnChange(e, index) {
-    const value = e.target.value.trim();
-    const currVal = value.slice(-1);
+    const val = e.target.value.trim();
+    // if (val) {
+    //     refArray?.current[index].disabled = true;
+    // }
+    if (inputArray[index + 1]) return; // cannot edit from between
+
+    const value = val.slice(-1);
     if (isNaN(value)) return;
-    console.log(currVal);
     const arr = [...inputArray];
-    // arr.splice(index,1,e.target.value)
-    arr[index] = currVal;
+    arr[index] = value;
     setInputArray(arr);
-    refArray.current[index + 1]?.focus();
+    value && refArray?.current[index + 1].focus();
   }
+
   function handleOnKeyDown(e, index) {
-    console.log(e);
-    if (e.key === "Backspace" && index > 0 && !e.target.value) {
-      refArray.current[index - 1]?.focus();
+    if (!e.target.value && e.key === "Backspace") {
+      refArray?.current[index - 1].focus();
     }
   }
-  useEffect(() => {
-    refArray.current[0]?.focus();
-  }, []);
 
+  useEffect(() => {
+    refArray?.current[0].focus();
+  }, []);
   return (
-    <div className="flex flex-col justify-center items-center gap-5 h-screen">
-      <h1 className="text-3xl font-bold ">Validate Otp</h1>
+    <>
+      <h1>OTP Input</h1>
       <div className="flex gap-2">
-        {inputArray.map((item, index) => {
+        {inputArray.map((i, index) => {
           return (
             <input
               key={index}
               onKeyDown={(e) => handleOnKeyDown(e, index)}
-              value={inputArray[index]}
-              onChange={(e) => handleOnChange(e, index)}
               ref={(input) => (refArray.current[index] = input)}
-              // type="number"
-              className=" text-center font-bold text-2xl rounded-xl w-12 h-12 border-2 border-black [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              onChange={(e) => handleOnChange(e, index)}
+              value={inputArray[index]}
+              className="border border-black rounded-lg w-12 h-12 text-center font-bold text-xl"
+              // type="text"
             />
           );
         })}
       </div>
-    </div>
+    </>
   );
 }
 
