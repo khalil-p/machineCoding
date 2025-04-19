@@ -1,1 +1,5 @@
 @import "tailwindcss";
+
+.parent {
+  padding-left: 10px;
+}
